@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import SleepingCharacter from './components/SleepingCharacter.jsx'
 import SituationPicker, { SITUATIONS } from './components/SituationPicker.jsx'
+import StopSnoringPage from './components/StopSnoringPage.jsx'
 import { SnoreEngine, PERSONALITIES } from './audio/snoreEngine.js'
 
 const ZZZ_POOL = ['z', 'z', 'Z', 'Z', 'ZZ', 'Zz', 'ZZZ', 'z z']
@@ -47,6 +48,7 @@ function formatSurvived(seconds) {
 }
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('snore')
   const [isSnoring, setIsSnoring] = useState(false)
   const [personality, setPersonality] = useState('gentleman')
   const [situation, setSituation] = useState(null)
@@ -134,99 +136,120 @@ export default function App() {
             <div className="logo-sub">The AI Agent for Boring Situations</div>
           </div>
         </div>
-        <div className="header-stats">
-          <div className="stat-chip">
-            <span className="stat-num">{snoreCount}</span>
-            <span className="stat-label">snores</span>
-          </div>
-          <div className="stat-chip">
-            <span className="stat-num">{formatSurvived(survived)}</span>
-            <span className="stat-label">endured</span>
+        <div className="header-right">
+          <div className="header-stats">
+            <div className="stat-chip">
+              <span className="stat-num">{snoreCount}</span>
+              <span className="stat-label">snores</span>
+            </div>
+            <div className="stat-chip">
+              <span className="stat-num">{formatSurvived(survived)}</span>
+              <span className="stat-label">endured</span>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="main">
-        {/* Character + floating ZZZs */}
-        <div className="character-area">
-          <SleepingCharacter isSnoring={isSnoring} />
-          <div className="zzz-container" aria-hidden="true">
-            {bubbles.map((b) => (
-              <span
-                key={b.id}
-                className="zzz-bubble"
-                style={{ '--x-offset': `${b.x}px` }}
-              >
-                {b.letter}
-              </span>
-            ))}
-          </div>
-        </div>
+      <nav className="tab-nav">
+        <button
+          className={`tab-btn ${activeTab === 'snore' ? 'active' : ''}`}
+          onClick={() => setActiveTab('snore')}
+        >
+          💤 Snore Mode
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'train' ? 'active' : ''}`}
+          onClick={() => setActiveTab('train')}
+        >
+          💪 Stop Snoring
+        </button>
+      </nav>
 
-        {/* Big snore button */}
-        <div className="button-area">
-          <button
-            className={`snore-btn ${isSnoring ? 'active' : ''}`}
-            style={{ '--p-color': pConfig.color }}
-            onClick={toggleSnore}
-            aria-label={isSnoring ? 'Stop snoring' : 'Start snoring'}
-          >
-            <span className="snore-btn-icon">{isSnoring ? '😴' : '💤'}</span>
-            <span className="snore-btn-text">{isSnoring ? 'STOP' : 'SNORE'}</span>
-          </button>
-        </div>
+      {activeTab === 'snore' ? (
+        <main className="main">
+          {/* Character + floating ZZZs */}
+          <div className="character-area">
+            <SleepingCharacter isSnoring={isSnoring} />
+            <div className="zzz-container" aria-hidden="true">
+              {bubbles.map((b) => (
+                <span
+                  key={b.id}
+                  className="zzz-bubble"
+                  style={{ '--x-offset': `${b.x}px` }}
+                >
+                  {b.letter}
+                </span>
+              ))}
+            </div>
+          </div>
 
-        {/* Personality selector */}
-        <div className="section">
-          <h3 className="section-label">Snore Personality</h3>
-          <div className="personality-grid">
-            {Object.values(PERSONALITIES).map((p) => (
-              <button
-                key={p.id}
-                className={`personality-chip ${personality === p.id ? 'active' : ''}`}
-                style={{ '--p-color': p.color }}
-                onClick={() => handlePersonality(p.id)}
-              >
-                <span className="p-emoji">{p.emoji}</span>
-                <span className="p-name">{p.name}</span>
-                <span className="p-desc">{p.description}</span>
-              </button>
-            ))}
+          {/* Big snore button */}
+          <div className="button-area">
+            <button
+              className={`snore-btn ${isSnoring ? 'active' : ''}`}
+              style={{ '--p-color': pConfig.color }}
+              onClick={toggleSnore}
+              aria-label={isSnoring ? 'Stop snoring' : 'Start snoring'}
+            >
+              <span className="snore-btn-icon">{isSnoring ? '😴' : '💤'}</span>
+              <span className="snore-btn-text">{isSnoring ? 'STOP' : 'SNORE'}</span>
+            </button>
           </div>
-        </div>
 
-        {/* Situation picker */}
-        <SituationPicker selected={situation} onSelect={setSituation} />
+          {/* Personality selector */}
+          <div className="section">
+            <h3 className="section-label">Snore Personality</h3>
+            <div className="personality-grid">
+              {Object.values(PERSONALITIES).map((p) => (
+                <button
+                  key={p.id}
+                  className={`personality-chip ${personality === p.id ? 'active' : ''}`}
+                  style={{ '--p-color': p.color }}
+                  onClick={() => handlePersonality(p.id)}
+                >
+                  <span className="p-emoji">{p.emoji}</span>
+                  <span className="p-name">{p.name}</span>
+                  <span className="p-desc">{p.description}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
-        {/* Bored-O-Meter */}
-        <div className="boredom-section">
-          <div className="boredom-header">
-            <span className="section-label">Bored-O-Meter</span>
-            <span className={boredomStatus.css}>{boredomStatus.label}</span>
+          {/* Situation picker */}
+          <SituationPicker selected={situation} onSelect={setSituation} />
+
+          {/* Bored-O-Meter */}
+          <div className="boredom-section">
+            <div className="boredom-header">
+              <span className="section-label">Bored-O-Meter</span>
+              <span className={boredomStatus.css}>{boredomStatus.label}</span>
+            </div>
+            <div className="boredom-track" role="progressbar" aria-valuenow={Math.round(boredomLevel)} aria-valuemin="0" aria-valuemax="100">
+              <div
+                className={`boredom-fill ${boredomLevel >= 100 ? 'full' : ''}`}
+                style={{ width: `${boredomLevel}%` }}
+              />
+            </div>
+            <div className="boredom-footer">
+              <span>{Math.round(boredomLevel)}% bored</span>
+              {boredomLevel >= 100 && (
+                <button
+                  className="reset-btn"
+                  onClick={() => {
+                    setBoredomLevel(0)
+                    setSurvived(0)
+                    setSnoreCount(0)
+                  }}
+                >
+                  Accept Fate &amp; Reset
+                </button>
+              )}
+            </div>
           </div>
-          <div className="boredom-track" role="progressbar" aria-valuenow={Math.round(boredomLevel)} aria-valuemin="0" aria-valuemax="100">
-            <div
-              className={`boredom-fill ${boredomLevel >= 100 ? 'full' : ''}`}
-              style={{ width: `${boredomLevel}%` }}
-            />
-          </div>
-          <div className="boredom-footer">
-            <span>{Math.round(boredomLevel)}% bored</span>
-            {boredomLevel >= 100 && (
-              <button
-                className="reset-btn"
-                onClick={() => {
-                  setBoredomLevel(0)
-                  setSurvived(0)
-                  setSnoreCount(0)
-                }}
-              >
-                Accept Fate &amp; Reset
-              </button>
-            )}
-          </div>
-        </div>
-      </main>
+        </main>
+      ) : (
+        <StopSnoringPage />
+      )}
     </div>
   )
 }
