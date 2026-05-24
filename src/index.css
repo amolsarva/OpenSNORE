@@ -1462,6 +1462,84 @@ body {
   background: rgba(139, 92, 246, 0.35);
 }
 
+/* ---- Download Banner ---- */
+
+.download-banner {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px 24px;
+  background: rgba(139, 92, 246, 0.05);
+  border-bottom: 1px solid var(--border);
+}
+
+.dl-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.dl-btn:hover {
+  background: rgba(139, 92, 246, 0.24);
+  border-color: var(--purple);
+}
+
+.dl-iphone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+}
+
+.dl-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.dl-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.dl-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dl-platform {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.dl-divider {
+  width: 1px;
+  height: 32px;
+  background: var(--border);
+  margin: 0 12px;
+}
+
+@media (max-width: 480px) {
+  .download-banner {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .dl-divider { width: 80%; height: 1px; margin: 0; }
+}
+
 /* ---- Stop Snoring responsive ---- */
 
 @media (max-width: 640px) {

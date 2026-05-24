@@ -165,6 +165,29 @@ export default function App() {
         </button>
       </nav>
 
+      <div className="download-banner">
+        <a
+          className="dl-btn mac"
+          href="https://github.com/amolsarva/OpenSNORE/releases/latest"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span className="dl-icon">🍎</span>
+          <span className="dl-text">
+            <span className="dl-label">Download for</span>
+            <span className="dl-platform">Mac</span>
+          </span>
+        </a>
+        <div className="dl-divider" />
+        <div className="dl-iphone">
+          <span className="dl-icon">📱</span>
+          <span className="dl-text">
+            <span className="dl-label">iPhone — open in Safari, tap</span>
+            <span className="dl-platform">Share → Add to Home Screen</span>
+          </span>
+        </div>
+      </div>
+
       {activeTab === 'snore' ? (
         <main className="main">
           {/* Character + floating ZZZs */}
