@@ -21,6 +21,8 @@ const QUICK_MEETINGS = [
 ]
 let nextBubbleId = 0
 
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+
 function Stars() {
   const stars = useMemo(
     () =>
@@ -113,7 +115,13 @@ export default function App() {
       })
       setIsSnoring(true)
       setWakeStatus('sleeping through it')
-      setAudioStatus(state === 'running' ? 'audio playing' : `audio ${state}`)
+      setAudioStatus(
+        state === 'running'
+          ? IS_IOS
+            ? 'audio playing; raise volume and disable silent mode'
+            : 'audio playing'
+          : `audio ${state}`,
+      )
       setAgentLine(nextLine)
     } catch {
       setAudioStatus('audio blocked by browser')
@@ -200,7 +208,13 @@ export default function App() {
     if (!engineRef.current) return
     try {
       const state = await engineRef.current.unlock()
-      setAudioStatus(state === 'running' ? 'test beep played' : `audio ${state}`)
+      setAudioStatus(
+        state === 'running'
+          ? IS_IOS
+            ? 'test beep sent; check volume and silent mode'
+            : 'test beep played'
+          : `audio ${state}`,
+      )
       setAgentLine('audio test complete')
     } catch {
       setAudioStatus('audio blocked; tap SNORE and check iPhone silent mode')
@@ -449,8 +463,8 @@ export default function App() {
                 <strong>{Math.round(intensity * 100)}%</strong>
               </label>
               <p className="phase-note">
-                Live now: generated Web Audio snores. On iPhone, use Test audio first
-                and check silent mode if the beep is muted.
+                Live now: generated Web Audio snores. On iPhone, use Test audio first,
+                turn volume up, and disable silent mode if the beep is muted.
               </p>
             </section>
 

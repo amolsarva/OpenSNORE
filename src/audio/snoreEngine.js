@@ -28,6 +28,11 @@ function makeDistortionCurve(amount) {
   return curve
 }
 
+function isLikelyIPhone() {
+  if (typeof navigator === 'undefined') return false
+  return /iPhone|iPod/.test(navigator.userAgent)
+}
+
 export const PERSONALITIES = {
   gentleman: {
     id: 'gentleman',
@@ -97,6 +102,7 @@ export class SnoreEngine {
     this.executiveMode = false
     this.onSnore = null
     this.master = null
+    this.mobilePresence = isLikelyIPhone()
   }
 
   _init() {
@@ -163,6 +169,16 @@ export class SnoreEngine {
     bpf2.frequency.value = freqHigh
     bpf2.Q.value = q * 0.6
 
+    // iPhone speakers roll off low rumble heavily, so add a quiet midrange
+    // presence band while preserving the low-frequency snore body.
+    const presence = ctx.createBiquadFilter()
+    presence.type = 'bandpass'
+    presence.frequency.value = this.mobilePresence ? 840 : 620
+    presence.Q.value = 1.2
+
+    const presenceGain = ctx.createGain()
+    presenceGain.gain.value = this.mobilePresence ? 0.22 : 0.09
+
     // Low shelf for body rumble
     const shelf = ctx.createBiquadFilter()
     shelf.type = 'lowshelf'
@@ -192,8 +208,11 @@ export class SnoreEngine {
     mix.gain.value = 0.65
     noise.connect(bpf)
     noise.connect(bpf2)
+    noise.connect(presence)
     bpf.connect(mix)
     bpf2.connect(mix)
+    presence.connect(presenceGain)
+    presenceGain.connect(mix)
     mix.connect(shelf)
 
     let lastNode = shelf
