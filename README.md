@@ -1,9 +1,20 @@
 # OpenSnoRE
 
-**The AI Agent for Boring Situations. Also, somehow, a pocket-sized snoring coach.**
+**Open-source delegated attendance software for low-stakes corporate boredom. Also, somehow, a pocket-sized snoring coach.**
 
 [![Deploy to GitHub Pages](https://github.com/amolsarva/OpenSNORE/actions/workflows/deploy.yml/badge.svg)](https://github.com/amolsarva/OpenSNORE/actions/workflows/deploy.yml)
 [![Build Mac App](https://github.com/amolsarva/OpenSNORE/actions/workflows/build-mac.yml/badge.svg)](https://github.com/amolsarva/OpenSNORE/actions/workflows/build-mac.yml)
+
+OpenSnoRE attends boring situations so you do not have to.
+
+Today, that means it mostly:
+
+- generates synthetic snores
+- waits on hold
+- pretends to listen
+- wakes up in a staged demo when someone says your name
+
+Eventually, it should become a more plausible agent for meetings, hold queues, and other coordination rituals that did not need to exist.
 
 OpenSnoRE is a small, weird, useful React app that does two things:
 
@@ -25,6 +36,27 @@ If that sentence made you smile, please star the repo. If it made you think "I c
 ### Snore Mode
 
 Press the big button and OpenSnoRE becomes your personal anti-productivity assistant.
+
+Live features:
+
+- adjustable synthetic snore engine
+- executive breathing mode
+- iPhone audio test/status messaging
+- wait-on-hold timer and visualizer
+- fake attentiveness phrases
+- manual transcript wake detection
+- one-tap meeting demo: snores, gets called on, says "Sorry, I was on mute."
+
+Experimental features:
+
+- microphone wake detection in browsers with `SpeechRecognition` / `webkitSpeechRecognition`
+
+Coming soon:
+
+- real meeting auto-join
+- lobby handling
+- reliable cross-browser microphone transcription
+- useful meeting summaries
 
 Current snore personalities:
 
@@ -82,6 +114,7 @@ The exercises here are inspired by myofunctional therapy research, but the app d
 - **React 18**
 - **Vite 5**
 - **Web Audio API**
+- **Web Speech API** where available for experimental wake detection
 - **Progressive Web App manifest + service worker**
 - **Electron 32** for the desktop build
 - **GitHub Actions** for Pages deploys and Mac release builds

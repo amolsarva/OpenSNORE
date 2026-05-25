@@ -21,7 +21,11 @@ const QUICK_MEETINGS = [
 ]
 let nextBubbleId = 0
 
-const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+const IS_IOS =
+  typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)
+const SpeechRecognition =
+  typeof window !== 'undefined' &&
+  (window.SpeechRecognition || window.webkitSpeechRecognition)
 
 function Stars() {
   const stars = useMemo(
@@ -89,9 +93,19 @@ export default function App() {
   const [audioStatus, setAudioStatus] = useState('tap SNORE to enable audio')
   const [meetingStatus, setMeetingStatus] = useState('opens a meeting page; auto-join is coming soon')
   const [holdEvent, setHoldEvent] = useState('hold music visualizer is ready')
+  const [demoStatus, setDemoStatus] = useState('ready to stage the 20-second joke')
+  const [listening, setListening] = useState(false)
+  const [micStatus, setMicStatus] = useState(
+    SpeechRecognition
+      ? 'speech wake detection available'
+      : 'speech wake detection unsupported here',
+  )
+  const [lastTranscript, setLastTranscript] = useState('')
 
   const engineRef = useRef(null)
   const resumeTimerRef = useRef(null)
+  const demoTimersRef = useRef([])
+  const recognitionRef = useRef(null)
 
   useEffect(() => {
     engineRef.current = new SnoreEngine()
@@ -238,6 +252,94 @@ export default function App() {
     }
   }, [isSnoring, startSnoring])
 
+  const queueDemoTimer = (fn, delay) => {
+    const timer = setTimeout(fn, delay)
+    demoTimersRef.current.push(timer)
+  }
+
+  const stopDemo = () => {
+    demoTimersRef.current.forEach(clearTimeout)
+    demoTimersRef.current = []
+    setDemoStatus('demo reset')
+  }
+
+  const runDemoMode = () => {
+    stopDemo()
+    setDemoStatus('demo running')
+    setSituation('vibes')
+    setHeardPhrase('')
+    startSnoring('joining recurring status meeting')
+    queueDemoTimer(() => {
+      setAgentLine('mm-hmm')
+      setDemoStatus('pretending to listen')
+    }, 2500)
+    queueDemoTimer(() => {
+      setHeardPhrase(`${monitorName}, any thoughts?`)
+      setWakeStatus(`${monitorName} mentioned`)
+      setDemoStatus('someone made the mistake of asking')
+    }, 5200)
+    queueDemoTimer(() => {
+      triggerWake(`${monitorName} mentioned`)
+      setDemoStatus('recovered with plausible excuse')
+    }, 6600)
+    queueDemoTimer(() => {
+      setDemoStatus('demo complete')
+    }, 10500)
+  }
+
+  const handleTranscript = useCallback((text) => {
+    setLastTranscript(text)
+    setHeardPhrase(text)
+    const phrase = normalizeHeard(text)
+    const name = normalizeHeard(monitorName)
+    if (name && phrase.includes(name)) {
+      triggerWake(`${monitorName} mentioned`)
+      return
+    }
+    const match = WAKE_PATTERNS.find((pattern) => phrase.includes(pattern))
+    if (match) triggerWake(match)
+  }, [monitorName, triggerWake])
+
+  const toggleListening = () => {
+    if (!SpeechRecognition) {
+      setMicStatus('speech recognition is not supported in this browser')
+      return
+    }
+
+    if (listening) {
+      recognitionRef.current?.stop()
+      setListening(false)
+      setMicStatus('mic wake detection paused')
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.continuous = true
+    recognition.interimResults = true
+    recognition.lang = 'en-US'
+    recognition.onstart = () => {
+      setListening(true)
+      setMicStatus('listening for your name and meeting bait')
+    }
+    recognition.onerror = (event) => {
+      setListening(false)
+      setMicStatus(`mic error: ${event.error}`)
+    }
+    recognition.onend = () => {
+      setListening(false)
+    }
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .slice(event.resultIndex)
+        .map((result) => result[0]?.transcript || '')
+        .join(' ')
+        .trim()
+      if (transcript) handleTranscript(transcript)
+    }
+    recognitionRef.current = recognition
+    recognition.start()
+  }
+
   const scanHeardPhrase = () => {
     const phrase = normalizeHeard(heardPhrase)
     const name = normalizeHeard(monitorName)
@@ -293,6 +395,8 @@ export default function App() {
   useEffect(() => {
     return () => {
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+      stopDemo()
+      recognitionRef.current?.stop()
     }
   }, [])
 
@@ -375,6 +479,20 @@ export default function App() {
 
       {activeTab === 'snore' ? (
         <main className="main">
+          <section className="reality-panel">
+            <div>
+              <h1>OpenSnoRE attends boring situations so you do not have to.</h1>
+              <p>
+                Live: synthetic snores, hold timer, fake attentiveness, demo wakeups.
+                Experimental: speech wake detection in browsers that support it.
+                Roadmap: actual meeting auto-join.
+              </p>
+            </div>
+            <button className="demo-btn" onClick={runDemoMode}>
+              Run meeting demo
+            </button>
+          </section>
+
           {/* Character + floating ZZZs */}
           <div className="character-area">
             <SleepingCharacter isSnoring={isSnoring} />
@@ -416,6 +534,7 @@ export default function App() {
                 Test audio
               </button>
             </div>
+            <div className="demo-status">{demoStatus}</div>
           </div>
 
           {/* Personality selector */}
@@ -466,6 +585,10 @@ export default function App() {
                 Live now: generated Web Audio snores. On iPhone, use Test audio first,
                 turn volume up, and disable silent mode if the beep is muted.
               </p>
+              <ul className="mini-list">
+                <li>Safari requires a tap before audio can play.</li>
+                <li>Silent mode may mute generated audio on some devices.</li>
+              </ul>
             </section>
 
             <section className="phase-panel">
@@ -534,8 +657,16 @@ export default function App() {
                 <span className="wake-pill">{wakeStatus}</span>
               </div>
               <p className="phase-note">
-                Manual transcript demo. Real microphone listening is coming soon.
+                Manual scan works everywhere. Mic wake detection works only where the
+                browser exposes speech recognition.
               </p>
+              <button
+                className={`small-action ${listening ? 'active' : ''}`}
+                onClick={toggleListening}
+              >
+                {listening ? 'Stop mic' : 'Start mic'}
+              </button>
+              <p className="phase-note">{micStatus}</p>
               <div className="name-row">
                 <input
                   className="name-input"
@@ -557,6 +688,9 @@ export default function App() {
                   Scan
                 </button>
               </div>
+              {lastTranscript && (
+                <p className="transcript-line">Heard: "{lastTranscript}"</p>
+              )}
             </section>
           </div>
 

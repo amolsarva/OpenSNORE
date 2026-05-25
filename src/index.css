@@ -165,6 +165,50 @@ body {
   width: 100%;
 }
 
+.reality-panel {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 20px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.reality-panel h1 {
+  font-size: 1.45rem;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+.reality-panel p {
+  margin-top: 8px;
+  color: var(--text-dim);
+  font-size: 0.83rem;
+  line-height: 1.55;
+}
+
+.demo-btn {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid rgba(251, 191, 36, 0.42);
+  border-radius: var(--radius-sm);
+  background: rgba(251, 191, 36, 0.14);
+  color: #fde68a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.demo-btn:hover {
+  background: rgba(251, 191, 36, 0.23);
+}
+
 /* ---- Character area ---- */
 
 .character-area {
@@ -395,6 +439,11 @@ body {
   font-size: 0.74rem;
 }
 
+.demo-status {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
 .inline-action {
   min-height: 30px;
   padding: 0 10px;
@@ -437,6 +486,16 @@ body {
   color: var(--text-muted);
   font-size: 0.72rem;
   line-height: 1.45;
+}
+
+.mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 16px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1.35;
 }
 
 .phase-panel-head {
@@ -634,6 +693,16 @@ body {
   font-size: 0.66rem;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.transcript-line {
+  padding: 8px 10px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.06);
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  line-height: 1.4;
 }
 
 /* ---- Personality Grid ---- */
@@ -899,6 +968,18 @@ body {
   .main {
     padding: 24px 16px 48px;
     gap: 26px;
+  }
+
+  .reality-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .reality-panel h1 {
+    font-size: 1.22rem;
+  }
+
+  .demo-btn {
+    width: 100%;
   }
 
   .personality-grid {
