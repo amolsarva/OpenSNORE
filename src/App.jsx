@@ -395,7 +395,8 @@ export default function App() {
   useEffect(() => {
     return () => {
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
-      stopDemo()
+      demoTimersRef.current.forEach(clearTimeout)
+      demoTimersRef.current = []
       recognitionRef.current?.stop()
     }
   }, [])
