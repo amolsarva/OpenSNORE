@@ -93,6 +93,8 @@ export class SnoreEngine {
     this.active = false
     this.timer = null
     this.personality = 'gentleman'
+    this.intensity = 0.72
+    this.executiveMode = false
     this.onSnore = null
   }
 
@@ -110,9 +112,13 @@ export class SnoreEngine {
     const now = ctx.currentTime
     const p = PERSONALITIES[this.personality]
     const { filterFreq, gain, q, duration, distortion, addTone } = p
+    const intensityGain = Math.max(0.15, Math.min(1.4, this.intensity))
+    const executiveGain = this.executiveMode ? 0.55 : 1
+    const activeGain = gain * intensityGain * executiveGain
+    const activeDuration = this.executiveMode ? duration * 1.18 : duration
     const [freqLow, freqHigh] = filterFreq
 
-    const noiseBuffer = createPinkNoiseBuffer(ctx, duration + 0.5)
+    const noiseBuffer = createPinkNoiseBuffer(ctx, activeDuration + 0.5)
     const noise = ctx.createBufferSource()
     noise.buffer = noiseBuffer
 
@@ -140,18 +146,18 @@ export class SnoreEngine {
 
     const inhale = 0.32
     const attack = 0.42
-    const hold = Math.max(0, duration - inhale - attack - 0.5)
+    const hold = Math.max(0, activeDuration - inhale - attack - 0.5)
 
-    env.gain.linearRampToValueAtTime(gain * 0.14, now + inhale)
-    env.gain.linearRampToValueAtTime(gain, now + inhale + attack)
+    env.gain.linearRampToValueAtTime(activeGain * 0.14, now + inhale)
+    env.gain.linearRampToValueAtTime(activeGain, now + inhale + attack)
     if (hold > 0) {
-      env.gain.setValueAtTime(gain, now + inhale + attack + hold)
+      env.gain.setValueAtTime(activeGain, now + inhale + attack + hold)
     }
-    env.gain.exponentialRampToValueAtTime(0.0001, now + duration)
+    env.gain.exponentialRampToValueAtTime(0.0001, now + activeDuration)
 
     // Filter sweeps up during snore onset, drops at the end
     bpf.frequency.linearRampToValueAtTime(freqHigh, now + inhale + attack)
-    bpf.frequency.linearRampToValueAtTime(freqLow * 0.7, now + duration)
+    bpf.frequency.linearRampToValueAtTime(freqLow * 0.7, now + activeDuration)
 
     const mix = ctx.createGain()
     mix.gain.value = 0.65
@@ -177,22 +183,22 @@ export class SnoreEngine {
       osc.type = 'sine'
       osc.frequency.setValueAtTime(200, now + inhale)
       osc.frequency.linearRampToValueAtTime(290, now + inhale + attack)
-      osc.frequency.linearRampToValueAtTime(175, now + duration)
+      osc.frequency.linearRampToValueAtTime(175, now + activeDuration)
 
       const oscEnv = ctx.createGain()
       oscEnv.gain.setValueAtTime(0, now)
-      oscEnv.gain.linearRampToValueAtTime(gain * 0.18, now + inhale + attack)
-      oscEnv.gain.exponentialRampToValueAtTime(0.0001, now + duration)
+      oscEnv.gain.linearRampToValueAtTime(activeGain * 0.18, now + inhale + attack)
+      oscEnv.gain.exponentialRampToValueAtTime(0.0001, now + activeDuration)
 
       osc.connect(oscEnv)
       oscEnv.connect(env)
       osc.start(now)
-      osc.stop(now + duration + 0.2)
+      osc.stop(now + activeDuration + 0.2)
     }
 
     env.connect(ctx.destination)
     noise.start(now)
-    noise.stop(now + duration + 0.2)
+    noise.stop(now + activeDuration + 0.2)
   }
 
   _loop() {
@@ -200,12 +206,18 @@ export class SnoreEngine {
     this._play()
     if (this.onSnore) this.onSnore()
     const p = PERSONALITIES[this.personality]
-    this.timer = setTimeout(() => this._loop(), p.duration * 1000 + p.pause)
+    const executivePause = this.executiveMode ? 1150 : 0
+    this.timer = setTimeout(
+      () => this._loop(),
+      p.duration * 1000 + p.pause + executivePause,
+    )
   }
 
-  start(personalityId, onSnore) {
+  start(personalityId, onSnore, options = {}) {
     this._init()
     this.personality = personalityId || 'gentleman'
+    this.intensity = options.intensity ?? this.intensity
+    this.executiveMode = options.executiveMode ?? this.executiveMode
     this.onSnore = onSnore
     this.active = true
     this._loop()
@@ -221,5 +233,13 @@ export class SnoreEngine {
 
   setPersonality(id) {
     this.personality = id
+  }
+
+  setIntensity(value) {
+    this.intensity = value
+  }
+
+  setExecutiveMode(value) {
+    this.executiveMode = value
   }
 }

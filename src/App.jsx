@@ -5,6 +5,20 @@ import StopSnoringPage from './components/StopSnoringPage.jsx'
 import { SnoreEngine, PERSONALITIES } from './audio/snoreEngine.js'
 
 const ZZZ_POOL = ['z', 'z', 'Z', 'Z', 'ZZ', 'Zz', 'ZZZ', 'z z']
+const ATTENTIVENESS_LINES = [
+  'mm-hmm',
+  'yep',
+  'that makes sense',
+  'totally',
+  'happy to take that offline',
+  'I think there are really two issues here',
+]
+const WAKE_PATTERNS = ['questions?', 'any thoughts', 'can you hear me', 'you there']
+const QUICK_MEETINGS = [
+  { id: 'zoom', label: 'Zoom', url: 'https://zoom.us/join' },
+  { id: 'meet', label: 'Meet', url: 'https://meet.google.com' },
+  { id: 'teams', label: 'Teams', url: 'https://teams.microsoft.com' },
+]
 let nextBubbleId = 0
 
 function Stars() {
@@ -47,6 +61,10 @@ function formatSurvived(seconds) {
   return `${m}m ${String(s).padStart(2, '0')}s`
 }
 
+function normalizeHeard(text) {
+  return text.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('snore')
   const [isSnoring, setIsSnoring] = useState(false)
@@ -56,8 +74,19 @@ export default function App() {
   const [boredomLevel, setBoredomLevel] = useState(0)
   const [survived, setSurvived] = useState(0)
   const [bubbles, setBubbles] = useState([])
+  const [intensity, setIntensity] = useState(0.72)
+  const [executiveMode, setExecutiveMode] = useState(false)
+  const [meetingUrl, setMeetingUrl] = useState('')
+  const [holdMode, setHoldMode] = useState(false)
+  const [holdSeconds, setHoldSeconds] = useState(0)
+  const [agentLine, setAgentLine] = useState('ambient corporate presence detected')
+  const [monitorName, setMonitorName] = useState('Amol')
+  const [heardPhrase, setHeardPhrase] = useState('')
+  const [wakeStatus, setWakeStatus] = useState('sleeping through it')
+  const [autoResume, setAutoResume] = useState(false)
 
   const engineRef = useRef(null)
+  const resumeTimerRef = useRef(null)
 
   useEffect(() => {
     engineRef.current = new SnoreEngine()
@@ -78,14 +107,88 @@ export default function App() {
       engineRef.current.stop()
       setIsSnoring(false)
     } else {
-      engineRef.current.start(personality, handleSnore)
+      engineRef.current.start(personality, handleSnore, { intensity, executiveMode })
       setIsSnoring(true)
+      setWakeStatus('sleeping through it')
     }
   }
 
   const handlePersonality = (id) => {
     setPersonality(id)
     engineRef.current?.setPersonality(id)
+  }
+
+  const handleIntensity = (event) => {
+    const value = Number(event.target.value)
+    setIntensity(value)
+    engineRef.current?.setIntensity(value)
+  }
+
+  const handleExecutiveMode = (event) => {
+    const enabled = event.target.checked
+    setExecutiveMode(enabled)
+    engineRef.current?.setExecutiveMode(enabled)
+  }
+
+  const launchMeeting = (url = meetingUrl) => {
+    const target = url.trim()
+    if (!target) return
+    const withProtocol = /^https?:\/\//i.test(target) ? target : `https://${target}`
+    window.open(withProtocol, '_blank', 'noopener,noreferrer')
+    if (!isSnoring) {
+      engineRef.current?.start(personality, handleSnore, { intensity, executiveMode })
+      setIsSnoring(true)
+    }
+    setAgentLine('joining call, lowering expectations')
+  }
+
+  const toggleHoldMode = () => {
+    setHoldMode((prev) => {
+      const next = !prev
+      if (next && !isSnoring) {
+        engineRef.current?.start(personality, handleSnore, { intensity, executiveMode })
+        setIsSnoring(true)
+      }
+      setAgentLine(next ? 'waiting on hold' : 'back to ordinary meeting survival')
+      return next
+    })
+  }
+
+  const celebrateHuman = () => {
+    setHoldMode(false)
+    setAgentLine('human detected, pretending to be alert')
+  }
+
+  const triggerWake = useCallback((reason) => {
+    setWakeStatus(`awake: ${reason}`)
+    setAgentLine('Sorry, I was on mute.')
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    if (isSnoring) {
+      engineRef.current?.stop()
+      setIsSnoring(false)
+      setAutoResume(true)
+      resumeTimerRef.current = setTimeout(() => {
+        engineRef.current?.start(personality, handleSnore, { intensity, executiveMode })
+        setIsSnoring(true)
+        setAutoResume(false)
+        setWakeStatus('sleeping through it')
+        setAgentLine('mm-hmm')
+      }, 8000)
+    }
+  }, [executiveMode, handleSnore, intensity, isSnoring, personality])
+
+  const scanHeardPhrase = () => {
+    const phrase = normalizeHeard(heardPhrase)
+    const name = normalizeHeard(monitorName)
+    if (!phrase) return
+    if (name && phrase.includes(name)) {
+      triggerWake(`${monitorName} mentioned`)
+    } else {
+      const match = WAKE_PATTERNS.find((pattern) => phrase.includes(pattern))
+      if (match) triggerWake(match)
+      else setWakeStatus('no action required')
+    }
+    setHeardPhrase('')
   }
 
   // Clean up bubbles after their animation completes
@@ -110,6 +213,27 @@ export default function App() {
     }, 1000)
     return () => clearInterval(interval)
   }, [isSnoring, situation])
+
+  useEffect(() => {
+    if (!holdMode) return
+    const interval = setInterval(() => setHoldSeconds((prev) => prev + 1), 1000)
+    return () => clearInterval(interval)
+  }, [holdMode])
+
+  useEffect(() => {
+    if (!isSnoring) return
+    const interval = setInterval(() => {
+      const line = ATTENTIVENESS_LINES[Math.floor(Math.random() * ATTENTIVENESS_LINES.length)]
+      setAgentLine(line)
+    }, 13000)
+    return () => clearInterval(interval)
+  }, [isSnoring])
+
+  useEffect(() => {
+    return () => {
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    }
+  }, [])
 
   const boredomStatus =
     boredomLevel >= 100
@@ -219,6 +343,14 @@ export default function App() {
             </button>
           </div>
 
+          <div className="agent-console" aria-live="polite">
+            <div className="agent-status">
+              <span className={`agent-dot ${isSnoring ? 'online' : ''}`} />
+              <span>{autoResume ? 'briefly conscious' : isSnoring ? 'delegated attendance active' : 'idle'}</span>
+            </div>
+            <div className="agent-line">"{agentLine}"</div>
+          </div>
+
           {/* Personality selector */}
           <div className="section">
             <h3 className="section-label">Snore Personality</h3>
@@ -236,6 +368,119 @@ export default function App() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="phase-grid">
+            <section className="phase-panel">
+              <div className="phase-panel-head">
+                <h3 className="section-label">Snore Engine</h3>
+                <label className="toggle-row">
+                  <input
+                    type="checkbox"
+                    checked={executiveMode}
+                    onChange={handleExecutiveMode}
+                  />
+                  <span>Executive breathing</span>
+                </label>
+              </div>
+              <label className="range-row">
+                <span>Intensity</span>
+                <input
+                  type="range"
+                  min="0.2"
+                  max="1.25"
+                  step="0.05"
+                  value={intensity}
+                  onChange={handleIntensity}
+                />
+                <strong>{Math.round(intensity * 100)}%</strong>
+              </label>
+            </section>
+
+            <section className="phase-panel">
+              <div className="phase-panel-head">
+                <h3 className="section-label">Meeting Launcher</h3>
+              </div>
+              <div className="meeting-row">
+                <input
+                  className="meeting-input"
+                  type="url"
+                  value={meetingUrl}
+                  onChange={(event) => setMeetingUrl(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') launchMeeting()
+                  }}
+                  placeholder="meet.google.com/..."
+                  aria-label="Meeting URL"
+                />
+                <button className="small-action" onClick={() => launchMeeting()}>
+                  Join
+                </button>
+              </div>
+              <div className="quick-meetings">
+                {QUICK_MEETINGS.map((meeting) => (
+                  <button
+                    key={meeting.id}
+                    className="quick-meeting"
+                    onClick={() => launchMeeting(meeting.url)}
+                  >
+                    {meeting.label}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className="phase-panel">
+              <div className="phase-panel-head">
+                <h3 className="section-label">Wait On Hold</h3>
+                <button
+                  className={`small-action ${holdMode ? 'active' : ''}`}
+                  onClick={toggleHoldMode}
+                >
+                  {holdMode ? 'Stop' : 'Start'}
+                </button>
+              </div>
+              <div className="hold-display">
+                <div className={`hold-bars ${holdMode ? 'active' : ''}`} aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <strong>{formatSurvived(holdSeconds)}</strong>
+              </div>
+              <button className="ghost-action" onClick={celebrateHuman}>
+                Human appeared
+              </button>
+            </section>
+
+            <section className="phase-panel">
+              <div className="phase-panel-head">
+                <h3 className="section-label">Name Detection</h3>
+                <span className="wake-pill">{wakeStatus}</span>
+              </div>
+              <div className="name-row">
+                <input
+                  className="name-input"
+                  value={monitorName}
+                  onChange={(event) => setMonitorName(event.target.value)}
+                  aria-label="Name to monitor"
+                />
+                <input
+                  className="phrase-input"
+                  value={heardPhrase}
+                  onChange={(event) => setHeardPhrase(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') scanHeardPhrase()
+                  }}
+                  placeholder="Amol, any thoughts?"
+                  aria-label="Heard phrase"
+                />
+                <button className="small-action" onClick={scanHeardPhrase}>
+                  Scan
+                </button>
+              </div>
+            </section>
           </div>
 
           {/* Situation picker */}
