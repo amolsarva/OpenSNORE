@@ -7,17 +7,21 @@
 
 OpenSnoRE attends boring situations so you do not have to.
 
-## Start Here: Click, Snore, Star
+## Try It Now
 
-You can test OpenSnoRE instantly. No setup, no terminal, no developer brain required.
+OpenSnoRE is ready to test instantly. No setup, no terminal, no developer brain required.
 
-1. **Click the live app:** [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
-2. **Press the snore button:** try it in your browser in a few seconds.
-3. **Star this page:** if it makes you laugh, helps, or feels worth watching, please hit the GitHub star so OpenSnoRE can find more people.
+**[Open opensnore.newaiyork.com](https://opensnore.newaiyork.com)**
 
-Prefer an app? Download the latest Mac build from [GitHub Releases](https://github.com/amolsarva/OpenSNORE/releases/latest). On iPhone, open [opensnore.newaiyork.com](https://opensnore.newaiyork.com) in Safari, tap Share, and choose Add to Home Screen.
+Click the site, press the snore button, and you are in. You can try the snore generator, boredom mode, and stop-snoring exercises directly in your browser.
 
-**The main ask: star this page.** Trying the website is instant. Starring it is the easiest way to help the project grow.
+Want it on your device?
+
+- **Mac:** download the latest app from [GitHub Releases](https://github.com/amolsarva/OpenSNORE/releases/latest)
+- **iPhone:** open [opensnore.newaiyork.com](https://opensnore.newaiyork.com) in Safari, tap Share, then Add to Home Screen
+- **Browser:** keep using [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
+
+**Most important: star this GitHub page.** That is the main growth path for OpenSnoRE. If you laugh, test it, share it, or want the project to keep going, hit Star before you leave.
 
 Today, that means it mostly:
 
@@ -34,24 +38,6 @@ OpenSnoRE is a small, weird, useful React app that does two things:
 2. It gives you guided, evidence-inspired myofunctional exercises that may help reduce real snoring over time.
 
 It is part toy, part wellness experiment, part audio sandbox, and part invitation to build the world's friendliest open-source snoring lab.
-
-If that sentence made you smile, please star the repo. If it made you think "I can make this better," please fork it.
-
-## Try It Instantly
-
-The fastest path is the website:
-
-**[Open OpenSnoRE Now](https://opensnore.newaiyork.com)**
-
-That link runs the app immediately in your browser. You can test the snore generator, the boredom mode, and the stop-snoring exercises without installing anything.
-
-Other easy options:
-
-- **Download the Mac app:** [latest release](https://github.com/amolsarva/OpenSNORE/releases/latest)
-- **Install on iPhone:** open [opensnore.newaiyork.com](https://opensnore.newaiyork.com) in Safari, tap Share, then Add to Home Screen.
-- **Share it with one bored person:** send them [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
-
-If you try it and want more of this to exist, **star this GitHub page before you leave**. Stars are the public signal that tells people this odd little project is alive.
 
 ## What It Does Today
 
