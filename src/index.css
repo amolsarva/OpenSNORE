@@ -385,6 +385,36 @@ body {
   text-align: center;
 }
 
+.audio-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+}
+
+.inline-action {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.1);
+  color: #86efac;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.inline-action:active,
+.small-action:active,
+.quick-meeting:active,
+.ghost-action:active {
+  transform: translateY(1px) scale(0.99);
+}
+
 .phase-grid {
   width: 100%;
   display: grid;
@@ -401,6 +431,12 @@ body {
   background: rgba(15, 23, 42, 0.45);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+}
+
+.phase-note {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
 }
 
 .phase-panel-head {
@@ -424,6 +460,8 @@ body {
 }
 
 .toggle-row input {
+  width: 18px;
+  height: 18px;
   accent-color: var(--purple-light);
 }
 
@@ -433,6 +471,7 @@ body {
 
 .range-row input {
   flex: 1;
+  min-height: 32px;
   accent-color: var(--purple-light);
 }
 
@@ -482,7 +521,7 @@ body {
 .small-action,
 .quick-meeting,
 .ghost-action {
-  height: 36px;
+  min-height: 38px;
   padding: 0 13px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
@@ -584,6 +623,17 @@ body {
   color: #86efac;
   background: rgba(16, 185, 129, 0.08);
   font-size: 0.68rem;
+}
+
+.soon-pill {
+  padding: 4px 9px;
+  border: 1px solid rgba(251, 191, 36, 0.26);
+  border-radius: var(--radius-pill);
+  background: rgba(251, 191, 36, 0.08);
+  color: #fde68a;
+  font-size: 0.66rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 /* ---- Personality Grid ---- */
@@ -865,8 +915,36 @@ body {
     flex-direction: column;
   }
 
+  .phase-panel {
+    min-height: 0;
+    padding: 18px 20px;
+  }
+
+  .audio-row,
+  .meeting-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .inline-action,
+  .small-action,
+  .ghost-action {
+    width: 100%;
+  }
+
+  .meeting-input,
+  .name-input,
+  .phrase-input {
+    height: 48px;
+    font-size: 0.9rem;
+  }
+
   .name-input {
     width: 100%;
+  }
+
+  .wake-pill {
+    max-width: 100%;
   }
 
   .character-area {

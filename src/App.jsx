@@ -84,6 +84,9 @@ export default function App() {
   const [heardPhrase, setHeardPhrase] = useState('')
   const [wakeStatus, setWakeStatus] = useState('sleeping through it')
   const [autoResume, setAutoResume] = useState(false)
+  const [audioStatus, setAudioStatus] = useState('tap SNORE to enable audio')
+  const [meetingStatus, setMeetingStatus] = useState('opens a meeting page; auto-join is coming soon')
+  const [holdEvent, setHoldEvent] = useState('hold music visualizer is ready')
 
   const engineRef = useRef(null)
   const resumeTimerRef = useRef(null)
@@ -101,44 +104,77 @@ export default function App() {
     setBubbles((prev) => [...prev.slice(-14), { id, letter, x }])
   }, [])
 
+  const startSnoring = useCallback(async (nextLine = 'delegated attendance active') => {
+    if (!engineRef.current) return
+    try {
+      const state = await engineRef.current.start(personality, handleSnore, {
+        intensity,
+        executiveMode,
+      })
+      setIsSnoring(true)
+      setWakeStatus('sleeping through it')
+      setAudioStatus(state === 'running' ? 'audio playing' : `audio ${state}`)
+      setAgentLine(nextLine)
+    } catch {
+      setAudioStatus('audio blocked by browser')
+      setAgentLine('audio needs a direct tap')
+    }
+  }, [executiveMode, handleSnore, intensity, personality])
+
   const toggleSnore = () => {
     if (!engineRef.current) return
     if (isSnoring) {
       engineRef.current.stop()
       setIsSnoring(false)
+      setAudioStatus('stopped')
+      setAgentLine('ambient corporate presence paused')
     } else {
-      engineRef.current.start(personality, handleSnore, { intensity, executiveMode })
-      setIsSnoring(true)
-      setWakeStatus('sleeping through it')
+      startSnoring()
     }
   }
 
   const handlePersonality = (id) => {
     setPersonality(id)
     engineRef.current?.setPersonality(id)
+    setAgentLine(`${PERSONALITIES[id].name} selected`)
   }
 
   const handleIntensity = (event) => {
     const value = Number(event.target.value)
     setIntensity(value)
     engineRef.current?.setIntensity(value)
+    setAgentLine(`snore intensity set to ${Math.round(value * 100)}%`)
   }
 
   const handleExecutiveMode = (event) => {
     const enabled = event.target.checked
     setExecutiveMode(enabled)
     engineRef.current?.setExecutiveMode(enabled)
+    setAgentLine(enabled ? 'executive breathing enabled' : 'executive breathing disabled')
   }
 
   const launchMeeting = (url = meetingUrl) => {
     const target = url.trim()
-    if (!target) return
+    if (!target) {
+      setMeetingStatus('paste a meeting link first')
+      setAgentLine('no meeting link detected')
+      return
+    }
     const withProtocol = /^https?:\/\//i.test(target) ? target : `https://${target}`
+    let meetingHost = 'meeting page'
+    try {
+      meetingHost = new URL(withProtocol).hostname
+    } catch {
+      setMeetingStatus('that link does not look valid yet')
+      setAgentLine('meeting link rejected by corporate IT')
+      return
+    }
     window.open(withProtocol, '_blank', 'noopener,noreferrer')
     if (!isSnoring) {
-      engineRef.current?.start(personality, handleSnore, { intensity, executiveMode })
-      setIsSnoring(true)
+      startSnoring('joining call, lowering expectations')
     }
+    setMeetingUrl(withProtocol)
+    setMeetingStatus(`opened ${meetingHost}; auto lobby handling is coming soon`)
     setAgentLine('joining call, lowering expectations')
   }
 
@@ -146,17 +182,29 @@ export default function App() {
     setHoldMode((prev) => {
       const next = !prev
       if (next && !isSnoring) {
-        engineRef.current?.start(personality, handleSnore, { intensity, executiveMode })
-        setIsSnoring(true)
+        startSnoring('waiting on hold')
       }
       setAgentLine(next ? 'waiting on hold' : 'back to ordinary meeting survival')
+      setHoldEvent(next ? 'tracking hold time' : 'hold timer paused')
       return next
     })
   }
 
   const celebrateHuman = () => {
     setHoldMode(false)
+    setHoldEvent(`human appeared after ${formatSurvived(holdSeconds)}`)
     setAgentLine('human detected, pretending to be alert')
+  }
+
+  const testAudio = async () => {
+    if (!engineRef.current) return
+    try {
+      const state = await engineRef.current.unlock()
+      setAudioStatus(state === 'running' ? 'test beep played' : `audio ${state}`)
+      setAgentLine('audio test complete')
+    } catch {
+      setAudioStatus('audio blocked; tap SNORE and check iPhone silent mode')
+    }
   }
 
   const triggerWake = useCallback((reason) => {
@@ -168,14 +216,13 @@ export default function App() {
       setIsSnoring(false)
       setAutoResume(true)
       resumeTimerRef.current = setTimeout(() => {
-        engineRef.current?.start(personality, handleSnore, { intensity, executiveMode })
-        setIsSnoring(true)
+        startSnoring('mm-hmm')
         setAutoResume(false)
         setWakeStatus('sleeping through it')
         setAgentLine('mm-hmm')
       }, 8000)
     }
-  }, [executiveMode, handleSnore, intensity, isSnoring, personality])
+  }, [isSnoring, startSnoring])
 
   const scanHeardPhrase = () => {
     const phrase = normalizeHeard(heardPhrase)
@@ -349,6 +396,12 @@ export default function App() {
               <span>{autoResume ? 'briefly conscious' : isSnoring ? 'delegated attendance active' : 'idle'}</span>
             </div>
             <div className="agent-line">"{agentLine}"</div>
+            <div className="audio-row">
+              <span>{audioStatus}</span>
+              <button className="inline-action" onClick={testAudio}>
+                Test audio
+              </button>
+            </div>
           </div>
 
           {/* Personality selector */}
@@ -395,11 +448,16 @@ export default function App() {
                 />
                 <strong>{Math.round(intensity * 100)}%</strong>
               </label>
+              <p className="phase-note">
+                Live now: generated Web Audio snores. On iPhone, use Test audio first
+                and check silent mode if the beep is muted.
+              </p>
             </section>
 
             <section className="phase-panel">
               <div className="phase-panel-head">
                 <h3 className="section-label">Meeting Launcher</h3>
+                <span className="soon-pill">auto-join soon</span>
               </div>
               <div className="meeting-row">
                 <input
@@ -428,6 +486,7 @@ export default function App() {
                   </button>
                 ))}
               </div>
+              <p className="phase-note">{meetingStatus}</p>
             </section>
 
             <section className="phase-panel">
@@ -449,6 +508,7 @@ export default function App() {
                 </div>
                 <strong>{formatSurvived(holdSeconds)}</strong>
               </div>
+              <p className="phase-note">{holdEvent}</p>
               <button className="ghost-action" onClick={celebrateHuman}>
                 Human appeared
               </button>
@@ -459,6 +519,9 @@ export default function App() {
                 <h3 className="section-label">Name Detection</h3>
                 <span className="wake-pill">{wakeStatus}</span>
               </div>
+              <p className="phase-note">
+                Manual transcript demo. Real microphone listening is coming soon.
+              </p>
               <div className="name-row">
                 <input
                   className="name-input"
