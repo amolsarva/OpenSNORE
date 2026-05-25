@@ -96,15 +96,44 @@ export class SnoreEngine {
     this.intensity = 0.72
     this.executiveMode = false
     this.onSnore = null
+    this.master = null
   }
 
   _init() {
     if (!this.ctx) {
       this.ctx = new (window.AudioContext || window.webkitAudioContext)()
+      this.master = this.ctx.createGain()
+      this.master.gain.value = 0.95
+      this.master.connect(this.ctx.destination)
     }
     if (this.ctx.state === 'suspended') {
-      this.ctx.resume()
+      return this.ctx.resume()
     }
+    return Promise.resolve()
+  }
+
+  async unlock() {
+    await this._init()
+    this._playPing()
+    return this.ctx?.state || 'unknown'
+  }
+
+  _playPing() {
+    const ctx = this.ctx
+    if (!ctx) return
+    const now = ctx.currentTime
+    const osc = ctx.createOscillator()
+    const env = ctx.createGain()
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(660, now)
+    osc.frequency.exponentialRampToValueAtTime(440, now + 0.18)
+    env.gain.setValueAtTime(0.0001, now)
+    env.gain.exponentialRampToValueAtTime(0.24, now + 0.03)
+    env.gain.exponentialRampToValueAtTime(0.0001, now + 0.22)
+    osc.connect(env)
+    env.connect(this.master || ctx.destination)
+    osc.start(now)
+    osc.stop(now + 0.24)
   }
 
   _play() {
@@ -114,7 +143,7 @@ export class SnoreEngine {
     const { filterFreq, gain, q, duration, distortion, addTone } = p
     const intensityGain = Math.max(0.15, Math.min(1.4, this.intensity))
     const executiveGain = this.executiveMode ? 0.55 : 1
-    const activeGain = gain * intensityGain * executiveGain
+    const activeGain = gain * intensityGain * executiveGain * 1.18
     const activeDuration = this.executiveMode ? duration * 1.18 : duration
     const [freqLow, freqHigh] = filterFreq
 
@@ -196,7 +225,7 @@ export class SnoreEngine {
       osc.stop(now + activeDuration + 0.2)
     }
 
-    env.connect(ctx.destination)
+    env.connect(this.master || ctx.destination)
     noise.start(now)
     noise.stop(now + activeDuration + 0.2)
   }
@@ -213,14 +242,15 @@ export class SnoreEngine {
     )
   }
 
-  start(personalityId, onSnore, options = {}) {
-    this._init()
+  async start(personalityId, onSnore, options = {}) {
+    await this._init()
     this.personality = personalityId || 'gentleman'
     this.intensity = options.intensity ?? this.intensity
     this.executiveMode = options.executiveMode ?? this.executiveMode
     this.onSnore = onSnore
     this.active = true
     this._loop()
+    return this.ctx?.state || 'unknown'
   }
 
   stop() {
