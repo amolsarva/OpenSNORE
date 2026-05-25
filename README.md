@@ -15,6 +15,9 @@ It is part toy, part wellness experiment, part audio sandbox, and part invitatio
 If that sentence made you smile, please star the repo. If it made you think "I can make this better," please fork it.
 
 ## Try It
+⭐️ 2-second demo: click https://opensnore.newaiyork.com and press the big button. If it makes you grin, star this repo.
+
+
 
 - Web app: https://opensnore.newaiyork.com
 - Latest Mac build: https://github.com/amolsarva/OpenSNORE/releases/latest
