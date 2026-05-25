@@ -7,6 +7,18 @@
 
 OpenSnoRE attends boring situations so you do not have to.
 
+## Start Here: Click, Snore, Star
+
+You can test OpenSnoRE instantly. No setup, no terminal, no developer brain required.
+
+1. **Click the live app:** [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
+2. **Press the snore button:** try it in your browser in a few seconds.
+3. **Star this page:** if it makes you laugh, helps, or feels worth watching, please hit the GitHub star so OpenSnoRE can find more people.
+
+Prefer an app? Download the latest Mac build from [GitHub Releases](https://github.com/amolsarva/OpenSNORE/releases/latest). On iPhone, open [opensnore.newaiyork.com](https://opensnore.newaiyork.com) in Safari, tap Share, and choose Add to Home Screen.
+
+**The main ask: star this page.** Trying the website is instant. Starring it is the easiest way to help the project grow.
+
 Today, that means it mostly:
 
 - generates synthetic snores
@@ -25,11 +37,21 @@ It is part toy, part wellness experiment, part audio sandbox, and part invitatio
 
 If that sentence made you smile, please star the repo. If it made you think "I can make this better," please fork it.
 
-## Try It
+## Try It Instantly
 
-- Web app: https://opensnore.newaiyork.com
-- Latest Mac build: https://github.com/amolsarva/OpenSNORE/releases/latest
-- iPhone/PWA install: open the web app in Safari, tap Share, then Add to Home Screen.
+The fastest path is the website:
+
+**[Open OpenSnoRE Now](https://opensnore.newaiyork.com)**
+
+That link runs the app immediately in your browser. You can test the snore generator, the boredom mode, and the stop-snoring exercises without installing anything.
+
+Other easy options:
+
+- **Download the Mac app:** [latest release](https://github.com/amolsarva/OpenSNORE/releases/latest)
+- **Install on iPhone:** open [opensnore.newaiyork.com](https://opensnore.newaiyork.com) in Safari, tap Share, then Add to Home Screen.
+- **Share it with one bored person:** send them [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
+
+If you try it and want more of this to exist, **star this GitHub page before you leave**. Stars are the public signal that tells people this odd little project is alive.
 
 ## What It Does Today
 
@@ -463,14 +485,23 @@ npm run electron:build  # build Mac DMG
 
 No license file is currently included. If you plan to reuse, redistribute, or build on this project publicly, add a license first so contributors know the rules.
 
-## Star, Fork, Snore, Improve
+## Star This Page
 
-If OpenSnoRE made you laugh, helped you think about sleep, or gave you a strange urge to write Web Audio filters, please:
+If OpenSnoRE made you laugh, helped you think about sleep, or gave you a reason to survive one more pointless call, please **star this GitHub page**.
 
-- star the repo
+That star is the whole growth loop right now. It helps other people discover the live app, makes the project look alive, and tells contributors this is worth improving.
+
+The easiest path:
+
+1. Try it instantly at [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
+2. Star this page
+3. Share the website with one bored person
+
+If you want to go further:
+
 - fork it
 - open an issue with an idea
 - send a tiny PR
 - build the audio-analysis future
 
-The dream is simple: make snoring less mysterious, make boring situations more survivable, and make the codebase welcoming enough that a curious developer can land a contribution before their tea gets cold.
+The dream is simple: make snoring less mysterious, make boring situations more survivable, and make OpenSnoRE easy enough to try that nobody has to read setup instructions before pressing the snore button.
