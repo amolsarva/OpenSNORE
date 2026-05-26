@@ -1,8 +1,9 @@
 {
   "name": "OpenSnoRE",
   "short_name": "OpenSnoRE",
-  "description": "The AI Agent for Boring Situations",
+  "description": "Fake snores for boring situations, guided exercises for quieter nights, and an open-source snoring lab.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0a0a1f",
   "theme_color": "#0a0a1f",
