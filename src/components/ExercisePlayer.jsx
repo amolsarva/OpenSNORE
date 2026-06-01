@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 
 const CIRCUMFERENCE = 2 * Math.PI * 42
 
-export default function ExercisePlayer({ exercise, onClose }) {
+export default function ExercisePlayer({ exercise, onClose, onComplete }) {
   const [stepIndex, setStepIndex] = useState(0)
   const [repIndex, setRepIndex] = useState(0)
   const [timeLeft, setTimeLeft] = useState(exercise.steps[0].duration)
   const [isRunning, setIsRunning] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
+  const recordedCompleteRef = useRef(false)
 
   const totalSteps = exercise.steps.length
   const totalReps = exercise.reps
@@ -73,6 +74,12 @@ export default function ExercisePlayer({ exercise, onClose }) {
     (step.duration - timeLeft)
   const overallPct = Math.min(100, (elapsed / totalTicks) * 100)
   const dashOffset = CIRCUMFERENCE * (timeLeft / step.duration)
+
+  useEffect(() => {
+    if (!isComplete || recordedCompleteRef.current) return
+    recordedCompleteRef.current = true
+    onComplete?.(exercise, totalTicks)
+  }, [exercise, isComplete, onComplete, totalTicks])
 
   if (isComplete) {
     return (

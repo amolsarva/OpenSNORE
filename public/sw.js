@@ -1,5 +1,12 @@
-const CACHE = 'opensnore-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'opensnore-v4';
+const scopeUrl = self.registration.scope;
+const indexUrl = new URL('index.html', scopeUrl).toString();
+const ASSETS = [
+  'manifest.json',
+  'icon-192.png',
+  'icon-512.png',
+  'apple-touch-icon.png',
+].map(path => new URL(path, scopeUrl).toString());
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
@@ -14,6 +21,19 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put(indexUrl, copy));
+          return response;
+        })
+        .catch(() => caches.match(indexUrl))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request))
   );

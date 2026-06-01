@@ -1,21 +1,22 @@
 {
   "name": "OpenSnoRE",
   "short_name": "OpenSnoRE",
-  "description": "The AI Agent for Boring Situations",
-  "start_url": "/",
+  "description": "Fake snores for boring situations, guided exercises for quieter nights, and an open-source snoring lab.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0a0a1f",
   "theme_color": "#0a0a1f",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

@@ -2,8 +2,14 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import SleepingCharacter from './components/SleepingCharacter.jsx'
 import SituationPicker, { SITUATIONS } from './components/SituationPicker.jsx'
 import StopSnoringPage from './components/StopSnoringPage.jsx'
+import SnoreLabPage from './components/SnoreLabPage.jsx'
+import InstallPage from './components/InstallPage.jsx'
 import { SnoreEngine, PERSONALITIES } from './audio/snoreEngine.js'
 
+const LIVE_APP_URL = 'https://amolsarva.github.io/OpenSNORE/'
+const GITHUB_URL = 'https://github.com/amolsarva/OpenSNORE'
+const RELEASES_URL = `${GITHUB_URL}/releases/latest`
+const FEATURED_PERSONALITY_IDS = ['gentleman', 'chainsaw', 'harmonist']
 const ZZZ_POOL = ['z', 'z', 'Z', 'Z', 'ZZ', 'Zz', 'ZZZ', 'z z']
 const ATTENTIVENESS_LINES = [
   'mm-hmm',
@@ -18,6 +24,36 @@ const QUICK_MEETINGS = [
   { id: 'zoom', label: 'Zoom', url: 'https://zoom.us/join' },
   { id: 'meet', label: 'Meet', url: 'https://meet.google.com' },
   { id: 'teams', label: 'Teams', url: 'https://teams.microsoft.com' },
+]
+const VIRAL_MISSIONS = [
+  {
+    title: 'The 15-Second Snore Test',
+    brief: 'Press SNORE, switch personalities once, then send the live site to someone who will laugh.',
+    share: 'I just ran the 15-second OpenSnoRE test. Click, snore, star: https://amolsarva.github.io/OpenSNORE/',
+  },
+  {
+    title: 'The Bored Meeting Rescue',
+    brief: 'Pick a boring situation, start snoring, and see how long you can endure before the meter gets rude.',
+    share: 'OpenSnoRE is now handling my boring meeting energy: https://amolsarva.github.io/OpenSNORE/',
+  },
+  {
+    title: 'The Snore Personality Draft',
+    brief: 'Try three snore personalities and decide which one deserves a dedicated fanbase.',
+    share: 'I am voting for a ridiculous OpenSnoRE snore personality. Try yours: https://amolsarva.github.io/OpenSNORE/',
+  },
+  {
+    title: 'The Quieter Night Preview',
+    brief: 'Open Stop Snoring, preview one guided exercise, then star the repo if this should get more polished.',
+    share: 'OpenSnoRE is half joke, half snoring exercise coach. It is weirdly useful: https://amolsarva.github.io/OpenSNORE/',
+  },
+]
+const ALIBIS = [
+  'Sorry, I was on mute.',
+  'I was pressure-testing the silence in this call.',
+  'I was giving that idea room to breathe.',
+  'I was aligning asynchronously with the oxygen in the room.',
+  'I was letting the previous point land.',
+  'I was running a local-first attention simulation.',
 ]
 let nextBubbleId = 0
 
@@ -91,9 +127,9 @@ export default function App() {
   const [wakeStatus, setWakeStatus] = useState('sleeping through it')
   const [autoResume, setAutoResume] = useState(false)
   const [audioStatus, setAudioStatus] = useState('tap SNORE to enable audio')
-  const [meetingStatus, setMeetingStatus] = useState('opens a meeting page; auto-join is coming soon')
-  const [holdEvent, setHoldEvent] = useState('hold music visualizer is ready')
-  const [demoStatus, setDemoStatus] = useState('ready to stage the 20-second joke')
+  const [meetingStatus, setMeetingStatus] = useState('opens the selected meeting page in a new tab')
+  const [holdEvent, setHoldEvent] = useState('toy timer ready')
+  const [demoStatus, setDemoStatus] = useState('simulated 20-second meeting joke ready')
   const [listening, setListening] = useState(false)
   const [micStatus, setMicStatus] = useState(
     SpeechRecognition
@@ -101,6 +137,12 @@ export default function App() {
       : 'speech wake detection unsupported here',
   )
   const [lastTranscript, setLastTranscript] = useState('')
+  const [shareStatus, setShareStatus] = useState('share the live app')
+  const [previewedExercises, setPreviewedExercises] = useState(false)
+  const [missionIndex, setMissionIndex] = useState(0)
+  const [alibi, setAlibi] = useState(ALIBIS[0])
+  const [reportStatus, setReportStatus] = useState('ready to copy')
+  const [lifetimeStats, setLifetimeStats] = useState({ totalSnores: 0, bestScore: 0 })
 
   const engineRef = useRef(null)
   const resumeTimerRef = useRef(null)
@@ -109,11 +151,26 @@ export default function App() {
 
   useEffect(() => {
     engineRef.current = new SnoreEngine()
+    try {
+      const saved = window.localStorage.getItem('opensnore.stats')
+      if (saved) setLifetimeStats(JSON.parse(saved))
+    } catch {
+      // Local stats are optional; private browsing can block storage.
+    }
     return () => engineRef.current?.stop()
   }, [])
 
   const handleSnore = useCallback(() => {
     setSnoreCount((c) => c + 1)
+    setLifetimeStats((prev) => {
+      const next = { ...prev, totalSnores: prev.totalSnores + 1 }
+      try {
+        window.localStorage.setItem('opensnore.stats', JSON.stringify(next))
+      } catch {
+        // Ignore storage failures; the live snore should never depend on persistence.
+      }
+      return next
+    })
     const letter = ZZZ_POOL[Math.floor(Math.random() * ZZZ_POOL.length)]
     const id = ++nextBubbleId
     const x = Math.random() * 80 - 40
@@ -175,6 +232,50 @@ export default function App() {
     setAgentLine(enabled ? 'executive breathing enabled' : 'executive breathing disabled')
   }
 
+  const shareOpenSnoRE = async () => {
+    const shareData = {
+      title: 'OpenSnoRE',
+      text: 'Try OpenSnoRE: fake snores for boring calls, real exercises for quieter nights.',
+      url: LIVE_APP_URL,
+    }
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+        setShareStatus('share sheet opened')
+        setAgentLine('OpenSnoRE escaped into the group chat')
+        return
+      }
+      await navigator.clipboard.writeText(LIVE_APP_URL)
+      setShareStatus('live app link copied')
+      setAgentLine('link copied for one bored person')
+    } catch {
+      setShareStatus(LIVE_APP_URL)
+      setAgentLine('copy manually: amolsarva.github.io/OpenSNORE')
+    }
+  }
+
+  const copyText = async (text, successMessage) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setReportStatus(successMessage)
+      setAgentLine(successMessage)
+    } catch {
+      setReportStatus('copy failed; select the text manually')
+      setAgentLine('clipboard refused the bit')
+    }
+  }
+
+  const rerollMission = () => {
+    setMissionIndex((prev) => (prev + 1) % VIRAL_MISSIONS.length)
+    setReportStatus('new mission loaded')
+  }
+
+  const rerollAlibi = () => {
+    const next = ALIBIS[(ALIBIS.indexOf(alibi) + 1) % ALIBIS.length]
+    setAlibi(next)
+    setAgentLine(next)
+  }
+
   const launchMeeting = (url = meetingUrl) => {
     const target = url.trim()
     if (!target) {
@@ -196,7 +297,7 @@ export default function App() {
       startSnoring('joining call, lowering expectations')
     }
     setMeetingUrl(withProtocol)
-    setMeetingStatus(`opened ${meetingHost}; auto lobby handling is coming soon`)
+    setMeetingStatus(`opened ${meetingHost}; no lobby automation`)
     setAgentLine('joining call, lowering expectations')
   }
 
@@ -413,7 +514,56 @@ export default function App() {
             : { label: '😑 Mildly Tedious', css: 'boredom-label' }
 
   const pConfig = PERSONALITIES[personality]
+  const activeMission = VIRAL_MISSIONS[missionIndex]
+  const activeSituation = SITUATIONS.find((s) => s.id === situation)
+  const snoreScore = Math.min(999, Math.round(snoreCount * 13 + survived * 1.7 + boredomLevel * 4))
+  const reportText = `OpenSnoRE report: ${snoreCount} synthetic snores, ${formatSurvived(survived)} endured${activeSituation ? ` during ${activeSituation.label}` : ''}, ${Math.round(boredomLevel)}% bored, ${PERSONALITIES[personality].name} mode. Try it: ${LIVE_APP_URL}`
+  const achievementList = [
+    {
+      id: 'first-snore',
+      label: 'First Snore',
+      unlocked: snoreCount > 0,
+      detail: 'Pressed the button.',
+    },
+    {
+      id: 'personality',
+      label: 'Taste Maker',
+      unlocked: personality !== 'gentleman',
+      detail: 'Changed the snore vibe.',
+    },
+    {
+      id: 'survivor',
+      label: 'Meeting Survivor',
+      unlocked: survived >= 30,
+      detail: 'Endured 30 seconds.',
+    },
+    {
+      id: 'training',
+      label: 'Exercise Explorer',
+      unlocked: previewedExercises,
+      detail: 'Opened the exercise coach.',
+    },
+    {
+      id: 'chaos',
+      label: 'Boredom Scholar',
+      unlocked: boredomLevel >= 50,
+      detail: 'Reached 50% bored.',
+    },
+  ]
+  const unlockedCount = achievementList.filter((a) => a.unlocked).length
 
+  useEffect(() => {
+    if (snoreScore <= lifetimeStats.bestScore) return
+    setLifetimeStats((prev) => {
+      const next = { ...prev, bestScore: snoreScore }
+      try {
+        window.localStorage.setItem('opensnore.stats', JSON.stringify(next))
+      } catch {
+        // Optional persistence only.
+      }
+      return next
+    })
+  }, [lifetimeStats.bestScore, snoreScore])
   return (
     <div className="app">
       <Stars />
@@ -423,10 +573,25 @@ export default function App() {
           <span className="logo-moon">🌙</span>
           <div>
             <div className="logo-title">OpenSnoRE</div>
-            <div className="logo-sub">The AI Agent for Boring Situations</div>
+            <div className="logo-sub">Synthetic snores, exercises, and a local audio lab</div>
           </div>
         </div>
         <div className="header-right">
+          {snoreCount > 0 && (
+            <div className="header-actions" aria-label="Project actions">
+              <button className="share-btn" onClick={shareOpenSnoRE}>
+                Share
+              </button>
+              <a
+                className="star-link"
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Star on GitHub
+              </a>
+            </div>
+          )}
           <div className="header-stats">
             <div className="stat-chip">
               <span className="stat-num">{snoreCount}</span>
@@ -449,49 +614,27 @@ export default function App() {
         </button>
         <button
           className={`tab-btn ${activeTab === 'train' ? 'active' : ''}`}
-          onClick={() => setActiveTab('train')}
+          onClick={() => {
+            setPreviewedExercises(true)
+            setActiveTab('train')
+          }}
         >
           💪 Stop Snoring
         </button>
-      </nav>
-
-      <div className="download-banner">
-        <a
-          className="dl-btn mac"
-          href="https://github.com/amolsarva/OpenSNORE/releases/latest"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          className={`tab-btn ${activeTab === 'lab' ? 'active' : ''}`}
+          onClick={() => setActiveTab('lab')}
         >
-          <span className="dl-icon">🍎</span>
-          <span className="dl-text">
-            <span className="dl-label">Download for</span>
-            <span className="dl-platform">Mac</span>
-          </span>
-        </a>
-        <div className="dl-divider" />
-        <div className="dl-iphone">
-          <span className="dl-icon">📱</span>
-          <span className="dl-text">
-            <span className="dl-label">iPhone — open in Safari, tap</span>
-            <span className="dl-platform">Share → Add to Home Screen</span>
-          </span>
-        </div>
-      </div>
+          📈 Snore Lab
+        </button>
+      </nav>
 
       {activeTab === 'snore' ? (
         <main className="main">
-          <section className="reality-panel">
-            <div>
-              <h1>OpenSnoRE attends boring situations so you do not have to.</h1>
-              <p>
-                Live: synthetic snores, hold timer, fake attentiveness, demo wakeups.
-                Experimental: speech wake detection in browsers that support it.
-                Roadmap: actual meeting auto-join.
-              </p>
-            </div>
-            <button className="demo-btn" onClick={runDemoMode}>
-              Run meeting demo
-            </button>
+          <section className="snore-intro">
+            <span className="section-label">Synthetic snore generator</span>
+            <h1>Press SNORE. Hear a ridiculous synthetic snore.</h1>
+            <p>Start with the joke. Exercises and local sleep-audio analysis are one tap away.</p>
           </section>
 
           {/* Character + floating ZZZs */}
@@ -538,11 +681,45 @@ export default function App() {
             <div className="demo-status">{demoStatus}</div>
           </div>
 
+          <div className="home-secondary-actions" aria-label="More OpenSnoRE modes">
+            <button
+              className="small-action"
+              onClick={() => {
+                setPreviewedExercises(true)
+                setActiveTab('train')
+              }}
+            >
+              Try exercises
+            </button>
+            <button className="ghost-action" onClick={() => setActiveTab('lab')}>
+              Analyze sleep audio
+            </button>
+          </div>
+
+          <section className="home-session-stats" aria-label="Current snore session">
+            <div>
+              <strong>{snoreCount}</strong>
+              <span>snores</span>
+            </div>
+            <div>
+              <strong>{formatSurvived(survived)}</strong>
+              <span>endured</span>
+            </div>
+            <div>
+              <strong>{pConfig.name}</strong>
+              <span>personality</span>
+            </div>
+          </section>
+
+          <button className="home-install-link" onClick={() => setActiveTab('install')}>
+            Install options
+          </button>
+
           {/* Personality selector */}
           <div className="section">
             <h3 className="section-label">Snore Personality</h3>
-            <div className="personality-grid">
-              {Object.values(PERSONALITIES).map((p) => (
+            <div className="personality-grid featured">
+              {FEATURED_PERSONALITY_IDS.map((id) => PERSONALITIES[id]).map((p) => (
                 <button
                   key={p.id}
                   className={`personality-chip ${personality === p.id ? 'active' : ''}`}
@@ -555,9 +732,118 @@ export default function App() {
                 </button>
               ))}
             </div>
+            <details className="personality-more">
+              <summary>More personalities</summary>
+              <div className="personality-grid">
+                {Object.values(PERSONALITIES)
+                  .filter((p) => !FEATURED_PERSONALITY_IDS.includes(p.id))
+                  .map((p) => (
+                    <button
+                      key={p.id}
+                      className={`personality-chip ${personality === p.id ? 'active' : ''}`}
+                      style={{ '--p-color': p.color }}
+                      onClick={() => handlePersonality(p.id)}
+                    >
+                      <span className="p-emoji">{p.emoji}</span>
+                      <span className="p-name">{p.name}</span>
+                      <span className="p-desc">{p.description}</span>
+                    </button>
+                  ))}
+              </div>
+            </details>
           </div>
 
-          <div className="phase-grid">
+          <details className="home-more experiments-more">
+            <summary>More joke tools and meeting experiments</summary>
+            <div className="home-more-body">
+              <div className="experiment-note">
+                These are sketches and browser-dependent experiments, not meeting automation.
+                Each card says what it can actually do.
+              </div>
+              <button className="demo-btn" onClick={runDemoMode}>
+                Run simulated meeting demo
+              </button>
+
+              <section className="insanity-grid" aria-label="OpenSnoRE viral tools">
+            <div className="insanity-card mission-card">
+              <span className="section-label">Mission control</span>
+              <h2>{activeMission.title}</h2>
+              <p>{activeMission.brief}</p>
+              <div className="insanity-actions">
+                <button
+                  className="small-action"
+                  onClick={() => copyText(activeMission.share, 'mission copy copied')}
+                >
+                  Copy mission
+                </button>
+                <button className="ghost-action" onClick={rerollMission}>
+                  New mission
+                </button>
+              </div>
+            </div>
+
+            <div className="insanity-card report-card">
+              <span className="section-label">Shareable report</span>
+              <div className="score-row">
+                <strong>{snoreScore}</strong>
+                <span>snore score</span>
+              </div>
+              <div className="lifetime-row">
+                <span>{lifetimeStats.totalSnores} lifetime snores</span>
+                <span>{lifetimeStats.bestScore} best score</span>
+              </div>
+              <p>{reportText}</p>
+              <div className="insanity-actions">
+                <button
+                  className="small-action"
+                  onClick={() => copyText(reportText, 'snore report copied')}
+                >
+                  Copy report
+                </button>
+                <button className="ghost-action" onClick={shareOpenSnoRE}>
+                  Share site
+                </button>
+              </div>
+              <span className="copy-status">{reportStatus}</span>
+            </div>
+
+            <div className="insanity-card alibi-card">
+              <span className="section-label">Meeting alibi</span>
+              <blockquote>{alibi}</blockquote>
+              <div className="insanity-actions">
+                <button
+                  className="small-action"
+                  onClick={() => copyText(alibi, 'alibi copied')}
+                >
+                  Copy alibi
+                </button>
+                <button className="ghost-action" onClick={rerollAlibi}>
+                  Reroll
+                </button>
+              </div>
+            </div>
+
+            <div className="insanity-card achievement-card">
+              <span className="section-label">Achievements</span>
+              <h2>{unlockedCount}/{achievementList.length} unlocked</h2>
+              <div className="achievement-list">
+                {achievementList.map((achievement) => (
+                  <div
+                    key={achievement.id}
+                    className={`achievement-pill ${achievement.unlocked ? 'unlocked' : ''}`}
+                  >
+                    <span>{achievement.unlocked ? '✓' : '•'}</span>
+                    <div>
+                      <strong>{achievement.label}</strong>
+                      <small>{achievement.detail}</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+              </section>
+
+              <div className="phase-grid">
             <section className="phase-panel">
               <div className="phase-panel-head">
                 <h3 className="section-label">Snore Engine</h3>
@@ -594,8 +880,8 @@ export default function App() {
 
             <section className="phase-panel">
               <div className="phase-panel-head">
-                <h3 className="section-label">Meeting Launcher</h3>
-                <span className="soon-pill">auto-join soon</span>
+                <h3 className="section-label">Meeting Link Opener</h3>
+                <span className="soon-pill">opens a page only</span>
               </div>
               <div className="meeting-row">
                 <input
@@ -629,7 +915,7 @@ export default function App() {
 
             <section className="phase-panel">
               <div className="phase-panel-head">
-                <h3 className="section-label">Wait On Hold</h3>
+                <h3 className="section-label">Hold Timer Simulation</h3>
                 <button
                   className={`small-action ${holdMode ? 'active' : ''}`}
                   onClick={toggleHoldMode}
@@ -654,7 +940,7 @@ export default function App() {
 
             <section className="phase-panel">
               <div className="phase-panel-head">
-                <h3 className="section-label">Name Detection</h3>
+                <h3 className="section-label">Name Wake Experiment</h3>
                 <span className="wake-pill">{wakeStatus}</span>
               </div>
               <p className="phase-note">
@@ -693,13 +979,13 @@ export default function App() {
                 <p className="transcript-line">Heard: "{lastTranscript}"</p>
               )}
             </section>
-          </div>
+              </div>
 
-          {/* Situation picker */}
-          <SituationPicker selected={situation} onSelect={setSituation} />
+              {/* Situation picker */}
+              <SituationPicker selected={situation} onSelect={setSituation} />
 
-          {/* Bored-O-Meter */}
-          <div className="boredom-section">
+              {/* Bored-O-Meter */}
+              <div className="boredom-section">
             <div className="boredom-header">
               <span className="section-label">Bored-O-Meter</span>
               <span className={boredomStatus.css}>{boredomStatus.label}</span>
@@ -725,10 +1011,21 @@ export default function App() {
                 </button>
               )}
             </div>
-          </div>
+              </div>
+            </div>
+          </details>
         </main>
-      ) : (
+      ) : activeTab === 'train' ? (
         <StopSnoringPage />
+      ) : activeTab === 'install' ? (
+        <InstallPage
+          releasesUrl={RELEASES_URL}
+          shareStatus={shareStatus}
+          onBack={() => setActiveTab('snore')}
+          onShare={shareOpenSnoRE}
+        />
+      ) : (
+        <SnoreLabPage />
       )}
     </div>
   )

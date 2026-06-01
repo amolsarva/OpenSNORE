@@ -1,27 +1,135 @@
 # OpenSnoRE
 
-**Open-source delegated attendance software for low-stakes corporate boredom. Also, somehow, a pocket-sized snoring coach.**
+**The open-source snoring app you can try right now: fake snores for boring moments, real exercises for quieter nights, and one very important Star button.**
 
 [![Deploy to GitHub Pages](https://github.com/amolsarva/OpenSNORE/actions/workflows/deploy.yml/badge.svg)](https://github.com/amolsarva/OpenSNORE/actions/workflows/deploy.yml)
 [![Build Mac App](https://github.com/amolsarva/OpenSNORE/actions/workflows/build-mac.yml/badge.svg)](https://github.com/amolsarva/OpenSNORE/actions/workflows/build-mac.yml)
 
-OpenSnoRE attends boring situations so you do not have to.
+OpenSnoRE attends boring situations so you do not have to. It is a browser app, a Mac app, a PWA, a joke with surprisingly practical edges, and a small open-source bet that snoring can be less mysterious.
+
+**Live app:** [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)<br>
+**Download:** [latest Mac release](https://github.com/amolsarva/OpenSNORE/releases/latest)<br>
+**Main request:** star this GitHub page
+
+**Deployment note:** before changing public URLs, GitHub Pages settings, or
+`public/CNAME`, read [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+## Project Update: The Snore Has Escaped
+
+OpenSnoRE started as a ridiculous question: what if the world's most boring
+moments had a tiny local agent that could snore on your behalf? It now has an
+answer you can actually click.
+
+What is working today:
+
+- **A live GitHub Pages app** at [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
+  that runs the real React build instead of raw source files.
+- **A procedural snore engine** that generates snores with Web Audio instead of
+  shipping canned sound clips.
+- **Eight snore personalities** ranging from polite little nap energy to
+  mattress-subwoofer disaster.
+- **Boredom theater:** situations, endurance timers, fake attentiveness lines,
+  hold-mode timing, wake-up phrases, meeting alibis, and a 20-second demo that
+  lands the joke fast.
+- **Share and star loops** built into both the app and this README, because the
+  project grows when someone clicks, laughs, and sends the link onward.
+- **A real stop-snoring side quest:** guided tongue, throat, jaw, and breathing
+  exercises with timed steps, programs, local practice streaks, and careful
+  health framing.
+- **A local Snore Lab:** upload or record a short clip, estimate likely snore
+  stretches, compare recent local samples, see a simple timeline, and copy a
+  cautious report without sending audio to a server.
+- **PWA and Mac-app foundations:** manifest, service worker, Electron wrapper,
+  GitHub Actions for Pages deploys, and release plumbing for downloadable builds.
+- **Deployment guardrails:** the app is now pointed at the working GitHub Pages
+  URL, with notes explaining why the broken Cloudflare custom domain should stay
+  out of the path until DNS is fixed and browser-verified.
+
+The vibe is now clear: OpenSnoRE is half prank, half practical sleep experiment,
+and all open-source invitation. It should stay instant to try, funny enough to
+share, honest enough not to overclaim, and small enough that a contributor can
+improve one tiny corner without needing a map and a week of courage.
+
+What remains is the truly interesting part:
+
+1. **Make the phone experience excellent.** The live site is the front door, so
+   mobile audio, install prompts, layout polish, offline behavior, and iPhone
+   quirks matter more than almost anything.
+2. **Turn exercise mode into a better tiny coach.** Add reminders, calmer
+   pacing, richer progress history, voice guidance, and stronger programs
+   without making medical promises the app cannot keep.
+3. **Build deeper local-first snore analysis.** Add spectral features, better
+   event classification, cleaner before/after comparisons, and keep recordings
+   private by default.
+4. **Make the evidence library stronger.** Cite the research, explain what each
+   exercise targets, separate solid evidence from promising evidence, and keep
+   the health language precise.
+5. **Polish the desktop path.** Add proper app icons, signing/notarization,
+   auto-update thinking, and maybe Windows/Linux builds once the web experience
+   earns it.
+6. **Invite the internet to make it weirder.** Community snore packs, better
+   boring situations, tiny achievements, silly share reports, and small PRs are
+   how the project becomes alive instead of merely available.
+
+The greatest-potential version of OpenSnoRE is not just a snore button. It is a
+privacy-respecting sleep-audio playground, a gentle exercise coach, and a
+strangely memorable open-source artifact that people can understand in five
+seconds and improve in an afternoon.
 
 ## Try It Now
 
-OpenSnoRE is ready to test instantly. No setup, no terminal, no developer brain required.
+OpenSnoRE is ready to test instantly. No signup, no setup, no terminal, no developer brain required.
 
-**[Open opensnore.newaiyork.com](https://opensnore.newaiyork.com)**
+**[Open amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)**
 
-Click the site, press the snore button, and you are in. You can try the snore generator, boredom mode, and stop-snoring exercises directly in your browser.
+Click the site, press the snore button, and you are in. You can test the snore generator, boredom mode, stop-snoring exercises, and local Snore Lab directly in your browser.
 
 Want it on your device?
 
 - **Mac:** download the latest app from [GitHub Releases](https://github.com/amolsarva/OpenSNORE/releases/latest)
-- **iPhone:** open [opensnore.newaiyork.com](https://opensnore.newaiyork.com) in Safari, tap Share, then Add to Home Screen
-- **Browser:** keep using [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
+- **iPhone:** open [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/) in Safari, tap Share, then Add to Home Screen
+- **Browser:** keep using [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
 
 **Most important: star this GitHub page.** That is the main growth path for OpenSnoRE. If you laugh, test it, share it, or want the project to keep going, hit Star before you leave.
+
+## Choose Your Path
+
+| I want to... | Do this |
+| --- | --- |
+| Try it immediately | Open [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/) |
+| Use it like an app | Add the website to your iPhone Home Screen |
+| Download it | Grab the [latest Mac release](https://github.com/amolsarva/OpenSNORE/releases/latest) |
+| Help without coding | Star this GitHub page |
+| Make it better | Fork it and add one small thing |
+| Explain it quickly | Use the share copy below |
+
+## The 30-Second Test
+
+1. Open [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
+2. Turn your volume down to a sane level
+3. Press the snore button
+4. Try a different snore personality
+5. Open the stop-snoring tab and preview an exercise
+6. Upload a short sample in Snore Lab if you have one
+7. Come back here and star the page
+
+That is the whole funnel. Website first. Download only if you want it. Star this page if the idea deserves oxygen.
+
+## One-Line Pitch
+
+OpenSnoRE is a free, open-source snoring app: instant synthetic snores for boring situations, guided exercises for real snoring, and a growing lab for privacy-respecting sleep-audio experiments.
+
+## Why It Exists
+
+Because snoring sits at a strange intersection:
+
+- it is funny until it ruins sleep
+- it is common but poorly understood by most people
+- it can be harmless, annoying, or clinically important
+- it is perfect for local-first audio experiments
+- it deserves tools that are playful without being misleading
+
+OpenSnoRE starts with the lowest-friction version of that idea: click a website, make a snore, try an exercise, star the page, and help pull the next version into existence.
 
 Today, that means it mostly:
 
@@ -39,15 +147,62 @@ OpenSnoRE is a small, weird, useful React app that does two things:
 
 It is part toy, part wellness experiment, part audio sandbox, and part invitation to build the world's friendliest open-source snoring lab.
 
+## Why Star It
+
+OpenSnoRE is the kind of project that spreads by people seeing it, trying it, laughing, and remembering it exists. A GitHub star is the easiest public signal that helps that happen.
+
+Stars matter here because they:
+
+- make the project easier to discover
+- show that the live demo is worth maintaining
+- encourage people to contribute new personalities and exercises
+- make future releases feel less like shouting into the void
+- create a simple public scoreboard for whether the idea has momentum
+
+Star this page if you want:
+
+- more snore personalities
+- better phone install support
+- sleep-audio analysis experiments
+- a more polished Mac app
+- more guided exercises
+- a weirder, friendlier open-source health toy
+
+You do not need to contribute code to help. Click the live site, star this page, and share [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/) with someone trapped in a boring call.
+
+## What Makes It Different
+
+- **Instant web demo:** the main experience runs at [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
+- **No account:** open it and test it
+- **No backend today:** the current app runs locally in the browser or Electron shell
+- **Procedural audio:** snores are generated live, not shipped as static sound files
+- **Real usefulness hiding inside the joke:** guided myofunctional exercises sit next to the snore machine
+- **Built-in sharing loop:** the app now has share and star prompts so the live demo can spread from inside the product
+- **Viral demo toys:** missions, snore reports, meeting alibis, achievements, and lifetime local stats make it easy to share the bit
+- **Local Snore Lab:** audio uploads are decoded in the browser for rough snore-event timelines
+- **Open-source expansion path:** personalities, exercises, accessibility, PWA polish, and analysis tools are all approachable contribution areas
+
 ## What It Does Today
 
 ### Snore Mode
 
-Press the big button and OpenSnoRE becomes your personal anti-productivity assistant.
+Press the big button and OpenSnoRE becomes your personal anti-productivity assistant. It makes synthetic snores live in the browser, adds just enough office-theater absurdity, and gives you knobs to change the vibe.
+
+Use it for:
+
+- testing the joke in five seconds
+- surviving pretend boredom with theatrical commitment
+- experimenting with procedural snore sounds
+- demonstrating the app to someone who has no patience for setup
 
 Live features:
 
 - adjustable synthetic snore engine
+- mission generator for viral demo prompts
+- shareable snore score report
+- local lifetime snore stats
+- unlockable achievements
+- meeting alibi generator
 - executive breathing mode
 - iPhone audio test/status messaging
 - wait-on-hold timer and visualizer
@@ -72,12 +227,16 @@ Current snore personalities:
 - **The Chainsaw**: industrial, relentless, emotionally unavailable.
 - **The Harmonist**: musical enough to be suspicious.
 - **The Freight Train**: deep, low, tectonic.
+- **The Espresso Machine**: hissing, gurgling, and over-caffeinated.
+- **The Harbor Fog Horn**: long, low, maritime, and deeply inconvenient.
+- **The Tiny Polite Nap**: small, courteous, and barely unionized.
+- **The Subwoofer**: wall-rattling bass from under a mattress.
 
 Under the hood, these are generated live with the Web Audio API. No snore files are shipped. The app synthesizes pink noise, shapes it through filters, adds envelopes, sweeps resonances, applies optional distortion, and occasionally gets a little too proud of itself.
 
 ### Bored-O-Meter
 
-Choose what you are suffering through:
+Choose what you are suffering through and let OpenSnoRE score the modern tragedy:
 
 - team standup
 - quarterly review
@@ -91,7 +250,14 @@ The app tracks your endured time, snore count, and boredom level. This is not sc
 
 ### Stop Snoring
 
-OpenSnoRE also includes guided exercises for the throat, tongue, jaw, soft palate, and breathing patterns.
+OpenSnoRE also includes guided exercises for the throat, tongue, jaw, soft palate, and breathing patterns. The goal is simple: make the useful part easy to try, timed, and non-intimidating.
+
+Use it when you want:
+
+- a quick throat or tongue exercise
+- a calmer pre-sleep routine
+- a guided timer instead of a vague checklist
+- a low-pressure way to explore myofunctional exercises
 
 Current exercise categories:
 
@@ -108,6 +274,54 @@ Current guided programs:
 - **The Choir Method**
 
 Each exercise has timed steps, reps, progress UI, completion state, and short science notes so the app feels less like a checklist and more like a coach with a timer.
+
+There is also a local practice coach. When you complete an exercise, OpenSnoRE
+stores a small summary in this browser: session count, minutes practiced, a
+current-day streak, the last completed exercise, and a seven-day practice strip.
+It does not upload anything or create an account.
+
+### Snore Lab
+
+Snore Lab is the first real step toward the audio-analysis future. Upload or
+record a short audio clip and OpenSnoRE decodes it locally in the browser,
+estimates likely snore-active stretches from the loudness envelope, renders a
+timeline, saves recent local summaries, and generates a copyable report.
+
+It currently does:
+
+- local file decoding with the Web Audio API
+- browser microphone recording for short local samples
+- rough quiet-floor and active-window detection
+- likely snore-event grouping
+- snore-active percentage
+- timeline visualization
+- recent local analysis history
+- latest-vs-previous snore-active comparison
+- copyable report text
+
+It does not diagnose sleep apnea, identify anatomy, or replace a sleep study.
+The next version should add spectral features, better event classification, and
+cleaner before/after comparisons across exercise programs.
+
+## Who It Is For
+
+- **People who want to try it instantly:** click [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
+- **People who want an app-like version:** install it on iPhone or download the Mac build
+- **People who snore:** try the guided exercises and read the health note below
+- **People who build things:** fork it, add a snore personality, improve the PWA, or help with audio analysis
+- **People who just enjoyed the bit:** star this page and keep moving
+
+## Install Options
+
+You do not have to install anything. The website is the default experience.
+
+If you still want it closer to your device:
+
+- **Use the website:** [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
+- **Install on iPhone:** open the website in Safari, tap Share, then Add to Home Screen
+- **Download for Mac:** use the [latest GitHub release](https://github.com/amolsarva/OpenSNORE/releases/latest)
+
+If you are unsure which one to pick, use the website first. It is the fastest test and the best link to share.
 
 ## Important Health Note
 
@@ -141,7 +355,6 @@ opensnore/
     icon-192.png
     icon-512.png
     apple-touch-icon.png
-    CNAME                    # custom GitHub Pages domain
   src/
     App.jsx                  # main app shell, tabs, snore mode
     main.jsx                 # React entrypoint
@@ -185,11 +398,14 @@ Vite will print a local URL, usually:
 http://localhost:5173
 ```
 
-Build the web app:
+Run the full local verifier:
 
 ```bash
-npm run build
+npm run verify
 ```
+
+That checks the local Snore Lab analyzer, builds the web app, and verifies that
+the production `dist/` paths are deployable on GitHub Pages.
 
 Preview the production build:
 
@@ -279,17 +495,30 @@ If you add exercises, keep them:
 
 ## Deployment
 
-The web app deploys to GitHub Pages from the `website` branch using `.github/workflows/deploy.yml`.
+The web app deploys to GitHub Pages from the `gh-pages` branch using `.github/workflows/deploy.yml`.
+The current production URL is [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/).
+Do not restore `public/CNAME` or point the app back at `opensnore.newaiyork.com`
+until the Cloudflare/DNS issue is fixed and the custom domain has been verified
+in a browser. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) before touching deploy
+settings.
 
 Tagged releases matching `v*` can trigger the Mac app workflow in `.github/workflows/build-mac.yml`, which builds a DMG and uploads it to the GitHub release.
 
 ## Wishlist
 
-This is where forks can get interesting.
+This is where forks can get interesting. If OpenSnoRE gets stars, this is the roadmap people are voting for.
+
+The highest-leverage future is obvious:
+
+1. make the instant website feel better on every phone
+2. make the Mac app easier to trust and download
+3. add real sleep-audio analysis without creepy data collection
+4. make the guided exercises feel like a tiny coach
+5. keep the joke alive without making the health side sloppy
 
 ### Audio Recording Upload + Snore Analysis
 
-Let users upload a sleep audio recording and get a useful, privacy-respecting analysis of what is happening.
+Let users upload a sleep audio recording and get a useful, privacy-respecting analysis of what is happening. The north star is local-first: your recording should not need to leave your machine just to get a useful signal.
 
 Possible first version:
 
@@ -323,7 +552,7 @@ Stretch version:
 
 ### More Snore Personalities
 
-Add new procedural snore characters:
+Add new procedural snore characters. This is the fastest, funniest way to make the app feel bigger:
 
 - The Espresso Machine
 - The Harbor Fog Horn
@@ -334,17 +563,18 @@ Add new procedural snore characters:
 
 Bonus points for personalities that are funny in the UI and meaningfully different in the audio graph.
 
+The dream here is a community snore pack: a tiny gallery of ridiculous, named, procedural snores that people can test instantly on the website.
+
 ### Better Exercise Coaching
 
-Ideas:
+The exercises should feel calm, guided, and easy to finish. Ideas:
 
-- daily streaks
 - reminders
 - adaptive programs
 - form tips
 - voice-guided exercise mode
 - "quiet mode" for doing exercises near sleeping people
-- progress journal
+- richer progress journal
 - before/after self-ratings
 - partner feedback mode
 
@@ -374,7 +604,7 @@ Wishlist:
 
 ### PWA + Offline Upgrades
 
-The current service worker is tiny. It can become much better.
+The current service worker is tiny. It can become much better, especially because many people will discover OpenSnoRE on a phone first.
 
 Ideas:
 
@@ -397,7 +627,7 @@ Electron wishlist:
 
 ### Developer Experience
 
-Make the repo friendlier for new contributors:
+Make the repo friendlier for new contributors without making the README feel like a wall of tooling:
 
 - tests for the snore engine helpers
 - component tests for exercise flows
@@ -422,7 +652,7 @@ Things that would be delightful:
 
 ## Good First Issues
 
-Looking for a manageable first fork? Try one of these:
+Looking for a manageable first fork? Read [CONTRIBUTING.md](CONTRIBUTING.md), then try one of these. Small, funny improvements are welcome:
 
 - Add a new snore personality in `src/audio/snoreEngine.js`.
 - Add one new boring situation in `src/components/SituationPicker.jsx`.
@@ -449,6 +679,40 @@ Please aim for:
 
 If you are changing audio behavior, describe what changed and why. A snore can be funny and still have an implementation rationale.
 
+## Share Copy
+
+Need a quick way to explain it?
+
+> OpenSnoRE is a free open-source snoring app you can try instantly at amolsarva.github.io/OpenSNORE. It makes synthetic snores for boring situations and includes guided exercises that may help reduce real snoring. Try it, laugh, and star the GitHub page.
+
+Short version:
+
+> Try OpenSnoRE: fake snores for boring calls, real exercises for quieter nights. amolsarva.github.io/OpenSNORE
+
+Even shorter:
+
+> OpenSnoRE: click, snore, star. amolsarva.github.io/OpenSNORE
+
+## Help It Spread
+
+The best way to help OpenSnoRE right now is simple:
+
+1. Open [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
+2. Try the snore button
+3. Star this page
+4. Send the website to one person who will understand the joke
+
+That is more useful than a complicated launch plan. The project needs visible interest, quick feedback, and small contributions.
+
+Good places to share it:
+
+- a group chat during a boring meeting
+- a sleep or wellness thread
+- a Web Audio / React community
+- a personal newsletter
+- a "weird useful tools" list
+- anywhere someone will click a link faster than they will read setup docs
+
 ## Design Principles
 
 - **Funny first, useful second, misleading never.**
@@ -461,7 +725,10 @@ If you are changing audio behavior, describe what changed and why. A snore can b
 
 ```bash
 npm run dev             # start Vite
+npm run verify          # analysis check, production build, deploy-path check
 npm run build           # build web app
+npm run verify:analysis # check Snore Lab analyzer behavior
+npm run verify:build    # check built GitHub Pages paths
 npm run preview         # preview production build
 npm run electron:dev    # run Electron + Vite together
 npm run electron:build  # build Mac DMG
@@ -469,7 +736,7 @@ npm run electron:build  # build Mac DMG
 
 ## License
 
-No license file is currently included. If you plan to reuse, redistribute, or build on this project publicly, add a license first so contributors know the rules.
+OpenSnoRE is available under the [MIT License](LICENSE).
 
 ## Star This Page
 
@@ -479,7 +746,7 @@ That star is the whole growth loop right now. It helps other people discover the
 
 The easiest path:
 
-1. Try it instantly at [opensnore.newaiyork.com](https://opensnore.newaiyork.com)
+1. Try it instantly at [amolsarva.github.io/OpenSNORE](https://amolsarva.github.io/OpenSNORE/)
 2. Star this page
 3. Share the website with one bored person
 
