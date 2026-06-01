@@ -11,7 +11,7 @@
     "verify:analysis": "node scripts/verify-analysis.mjs",
     "verify:engine": "node scripts/verify-snore-engine.mjs",
     "verify:homepage": "node scripts/verify-homepage.mjs",
-    "verify:browser": "electron scripts/verify-browser.cjs",
+    "verify:browser": "electron --no-sandbox scripts/verify-browser.cjs",
     "verify:build": "node scripts/verify-build.mjs",
     "preview": "vite preview",
     "electron:dev": "concurrently -k \"vite --port 5173\" \"wait-on http://localhost:5173 && electron .\"",
