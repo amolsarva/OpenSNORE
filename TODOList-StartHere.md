@@ -91,5 +91,5 @@ Goal: make the live homepage usable before attempting a broader redesign.
   first-action hierarchy, and service-worker scope.
 - [x] Add a fake Web Audio smoke test for synthetic-snore startup and shutdown.
 - [x] Add a browser regression test for Web Audio startup.
-- [ ] Verify the production deployment with the checklist in
+- [x] Verify the production deployment with the checklist in
   `docs/DEPLOYMENT.md`.
